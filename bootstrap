@@ -1,0 +1,105 @@
+#!/bin/sh
+
+# Ask for the administrator password upfront.
+sudo -v
+
+# Keep-alive: update existing `sudo` time stamp until the script has finished.
+while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
+# Install git, curl
+sudo apt-get update
+sudo apt-get install -y curl git software-properties-common apt-transport-https wget build-essential
+
+# Install Ibus
+sudo add-apt-repository ppa:ubuntu-vn/ppa
+sudo apt-get update
+sudo apt-get install ibus-unikey
+ibus restart
+
+# Install pip
+sudo apt install python-pip
+
+cd ~
+
+# set up Terminal
+sudo apt install zsh
+sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+curl -O https://raw.githubusercontent.com/GeminiWind/dotfiles/master/zsh/.zshrc
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+curl -O https://raw.githubusercontent.com/GeminiWind/dotfiles/master/p10k/.p10k.zsh
+
+# set up vim
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+curl -O https://raw.githubusercontent.com/GeminiWind/dotfiles/master/vim/.vimrc
+curl -O ~/.vim https://raw.githubusercontent.com/GeminiWind/dotfiles/master/vim/config
+
+# Install docker
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update
+sudo apt-get install -y docker-ce
+sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+# Install nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+
+# Install vscode
+wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+sudo apt-get update
+sudo apt install code
+
+# Install VSCode Extension
+code --install-extension 42Crunch.vscode-openapi
+code --install-extension akamud.vscode-theme-onedark
+code --install-extension alefragnani.project-manager
+code --install-extension Arjun.swagger-viewer
+code --install-extension bmewburn.vscode-intelephense-client
+code --install-extension ChakrounAnas.turbo-console-log
+code --install-extension ckolkman.vscode-postgres
+code --install-extension CoenraadS.bracket-pair-colorizer-2
+code --install-extension dbaeumer.vscode-eslint
+code --install-extension dsznajder.es7-react-js-snippets
+code --install-extension eamodio.gitlens
+code --install-extension EditorConfig.EditorConfig
+code --install-extension emmanuelbeziat.vscode-great-icons
+code --install-extension esbenp.prettier-vscode
+code --install-extension formulahendry.auto-close-tag
+code --install-extension formulahendry.auto-rename-tag
+code --install-extension hashicorp.terraform
+code --install-extension jasonnutter.search-node-modules
+code --install-extension kisstkondoros.vscode-codemetrics
+code --install-extension kumar-harsh.graphql-for-vscode
+code --install-extension mikestead.dotenv
+code --install-extension mongodb.mongodb-vscode
+code --install-extension ms-azuretools.vscode-docker
+code --install-extension ms-vscode.sublime-keybindings
+code --install-extension ms-vscode.vscode-typescript-tslint-plugin
+code --install-extension msjsdiag.debugger-for-chrome
+code --install-extension redhat.vscode-yaml
+code --install-extension SirTori.indenticator
+code --install-extension softwaredotcom.swdc-vscode
+code --install-extension steoates.autoimport
+code --install-extension streetsidesoftware.code-spell-checker
+code --install-extension TabNine.tabnine-vscode
+code --install-extension techer.open-in-browser
+code --install-extension WallabyJs.quokka-vscode
+code --install-extension wayou.vscode-todo-highlight
+code --install-extension wix.vscode-import-cost
+code --install-extension xabikos.JavaScriptSnippets
+code --install-extension yanqing.esign-comment-ts
+code --install-extension yzhang.markdown-all-in-one
+
+# Install Google Chrome
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt install ./google-chrome-stable_current_amd64.deb
+
+# Change default shell to zsh
+chsh -s $(which zsh)
+
+# Logout, then back to run
+# source ~/.zshrc
+# nvm install --lts
+# vim +'PlugInstall --sync' +qa
